@@ -1,19 +1,28 @@
 using System.IO;
+using System.Collections.Generic;
+using System;
 
 namespace Aula_27_28_29_30
 {
     public class Produto
-    {
+    {   
+        // ATRIBUTOS BASICOS
         public int Codigo {get; set;}
         public string Nome {get; set;}
         public float Preco {get; set;}
 
         private const string PATH = "Database/produto.csv";
-        //private const string DIRECTORY = "Aula_27_28_29_30/Database";
+        //(erro)  private const string DIRECTORY = "Aula_27_28_29_30/Database";
 
-        //file.Directory.CreateDirectory(PATH); // If the directory already exists, this method does nothing.
+        //(erro)  file.Directory.CreateDirectory(PATH); // If the directory already exists, this method does nothing.
 
         public Produto(){
+            /// <summary>
+            /// Metodo construtor:    
+            /// Verifica a existencia da pasta ou do arquivo
+            /// Caso nao exista, ele cria o diretorio e o arquivo
+            /// </summary>
+            /// <returns></returns>
             string pasta = PATH.Split("/")[0];
 
             if (!Directory.Exists(pasta)) {
@@ -25,16 +34,60 @@ namespace Aula_27_28_29_30
         }
 
         public void Cadastrar(Produto prod ){
+            /// <summary>
+            /// Cadastra novos produtos
+            /// </summary>
+            /// <returns></returns>
             var linha = new string[] { PrepararLinha(prod) };
 
             File.AppendAllLines(PATH, linha);
         }
 
         public string PrepararLinha(Produto p){
+            /// <summary>
+            /// Organiza a escrita no .csv
+            /// </summary>
+            /// <value></value>
             return $"código={p.Codigo};nome={p.Nome};preco={p.Preco}";
         }
 
+        public List<Produto> Ler(){
+            /// <summary>
+            /// Le os arquivos no .csv
+            /// </summary>
+            /// <typeparam name="Produto"></typeparam>
+            /// <returns></returns>
+            List<Produto> produtos = new List<Produto>(); // Cria uma nova lista
+            
+
+            string[] linhas = File.ReadAllLines(PATH); // Le as linhas
+
+            foreach  (string linha in linhas){
+                string[] dado = linha.Split(";");
+
+                Produto p = new Produto();
+                p.Codigo = Int32.Parse( Separar(dado[0]) );
+                p.Nome = Separar( dado[1] );
+                p.Preco = float.Parse( Separar(dado[2]) );
+
+                produtos.Add(p);
+            }
+
+            return produtos;
+        }
+
+        private string Separar(string _coluna){
+            /// <summary>
+            /// Separa as colunas
+            /// </summary>
+            /// <returns></returns>
+            return _coluna.Split("=")[1]; 
+        }
+
         public Produto(int _codigo, string _nome, float _preco){
+            /// <summary>
+            /// Metodo construtor:
+            /// </summary>
             this.Nome = _nome;
             this.Codigo = _codigo;
             this.Preco = _preco;
