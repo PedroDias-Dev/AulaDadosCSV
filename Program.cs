@@ -21,6 +21,9 @@ namespace Aula_27_28_29_30
 
             p2.Cadastrar(p2);
 
+            p1.Remover("Gibson");
+            
+
             List<Produto> lista = new List<Produto>();
             lista = p1.Ler();
             lista = p2.Ler();
@@ -30,7 +33,7 @@ namespace Aula_27_28_29_30
             }
 
 
-            
+
         }
     }
 }

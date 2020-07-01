@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Aula_27_28_29_30
 {
@@ -72,9 +73,44 @@ namespace Aula_27_28_29_30
 
                 produtos.Add(p);
             }
+            produtos = produtos.OrderBy(y => y.Nome).ToList();
 
             return produtos;
         }
+
+        public void Remover(string _termo){
+            /// <summary>
+            /// Lista que servira como backup para as linhas do .csv
+            /// </summary>
+            /// <param name="_nome"></param>
+            /// <returns></returns>
+            List<string> linhas = new List<string>();
+
+            // StreamReader le o nosso .csv
+            using(StreamReader arquivo = new StreamReader(PATH)){
+                string linha;
+                while((linha = arquivo.ReadLine()) != null){
+                    linhas.Add(linha);
+                }
+            }
+            //remove as linhas que tiverem o argumento (_termo) : Tagima p ex
+            linhas.RemoveAll(l => l.Contains(_termo));
+
+            //Reescreve o .csv
+            using(StreamWriter output = new StreamWriter(PATH)){
+                foreach(string ln in linhas)
+                {
+                    output.Write(ln + "\n");
+                }
+            }
+        }
+
+
+        public List<Produto> Filtrar(string _nome){
+            return Ler().FindAll(x => x.Nome == _nome);
+        }
+
+        
 
         private string Separar(string _coluna){
             /// <summary>
