@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Aula_27_28_29_30
 {
-    public class Produto
+    public class Produto : IProduto
     {   
         // ATRIBUTOS BASICOS
         public int Codigo {get; set;}
@@ -118,6 +118,53 @@ namespace Aula_27_28_29_30
             /// </summary>
             /// <returns></returns>
             return _coluna.Split("=")[1]; 
+        }
+
+        /// <summary>
+        /// Altera um produto
+        /// </summary>
+        /// <param name="_produtoAlterado">Objeto de Produto</param>
+        public void Alterar(Produto _produtoAlterado){
+
+            // Criamos uma lista que servirá como uma espécie de backup para as linhas do csv
+            List<string> linhas = new List<string>();
+
+            // Utilizamos a bliblioteca StreamReader para ler nosso .csv
+            using(StreamReader arquivo = new StreamReader(PATH))
+            {
+                string linha;
+                while((linha = arquivo.ReadLine()) != null)
+                {
+                    linhas.Add(linha);
+                }
+            }
+            // codigo=2;nome=Ibanez;preco=7500
+            // linhas.RemoveAll(z => z.Split(";")[0].Contains(_produtoAlterado.Codigo.ToString()));
+            
+            // codigo= 2; nome=Ibanez;preco=7500
+            //linhas.RemoveAll(z => z.Split(";")[0].Split("=")[1] == _produtoAlterado.Codigo.ToString());
+
+            linhas.RemoveAll(z => z.Split(";")[0].Contains(_produtoAlterado.Codigo.ToString()));
+
+            // Adicionamos a linha alterada na lista de backup
+            linhas.Add( PrepararLinha(_produtoAlterado) );
+
+            // Reescrevemos nosso csv do zero
+            ReescreverCSV(linhas);         
+        }
+
+        /// <summary>
+        /// Reescreve o CSV (REFATORAÇAO)
+        /// </summary>
+        /// <param name="lines"></param>
+        private void ReescreverCSV(List<string> lines){
+            using(StreamWriter output = new StreamWriter(PATH)){
+                foreach(string ln in lines)
+                {
+                    output.Write(ln + "\n");
+                }
+            }
+
         }
 
         public Produto(int _codigo, string _nome, float _preco){
